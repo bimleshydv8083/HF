@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HarmonyFinder | Discover Music</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .search-result:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .active-tab {
+            border-bottom: 2px solid #1DB954;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header class="bg-gray-800/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fab fa-spotify text-2xl text-green-500"></i>
+                <h1 class="text-xl font-bold">HarmonyFinder</h1>
+            </div>
+            
+            <div class="relative w-1/3">
+                <input type="text" placeholder="Search for songs, artists, or genres..." 
+                    class="w-full py-2 px-4 pr-10 rounded-full bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                <button class="absolute right-3 top-2 text-gray-400 hover:text-white">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-300 hover:text-white">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <div class="flex items-center space-x-2 cursor-pointer group">
+                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <span class="group-hover:text-green-500">User</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="flex space-x-6 mb-8 border-b border-gray-700">
+            <button class="pb-2 font-medium text-gray-400 hover:text-white active-tab">For You</button>
+            <button class="pb-2 font-medium text-gray-400 hover:text-white">Top Tracks</button>
+            <button class="pb-2 font-medium text-gray-400 hover:text-white">New Releases</button>
+            <button class="pb-2 font-medium text-gray-400 hover:text-white">Genres</button>
+        </div>
+        
+        <h2 class="text-2xl font-bold mb-6">Recommended For You</h2>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <!-- Sample Music Card - Will be populated by JavaScript -->
+            <div class="search-result bg-gray-800 p-4 rounded-lg transition duration-300 cursor-pointer">
+                <div class="relative mb-4">
+                    <img src="https://images.pexels.com/photos/167092/pexels-photo-167092.jpeg" alt="Album Cover" class="w-full aspect-square object-cover rounded">
+                    <button class="absolute bottom-2 right-2 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <i class="fas fa-play text-white"></i>
+                    </button>
+                </div>
+                <h3 class="font-semibold truncate">Song Title</h3>
+                <p class="text-gray-400 text-sm truncate">Artist Name</p>
+            </div>
+            
+            <!-- More cards will be added dynamically -->
+        </div>
+
+        <!-- Search Results Section -->
+        <div id="search-results" class="mt-12 hidden">
+            <h2 class="text-2xl font-bold mb-6">Search Results</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></div>
+        </div>
+    </main>
+
+    <!-- Player Footer -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-3">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4 w-1/4">
+                <img src="https://images.pexels.com/photos/167092/pexels-photo-167092.jpeg" alt="Now Playing" class="w-12 h-12 rounded">
+                <div>
+                    <h4 class="font-medium">Song Title</h4>
+                    <p class="text-gray-400 text-sm">Artist Name</p>
+                </div>
+                <button class="text-gray-400 hover:text-white">
+                    <i class="far fa-heart"></i>
+                </button>
+            </div>
+            
+            <div class="flex flex-col items-center w-2/4">
+                <div class="flex items-center space-x-6 mb-2">
+                    <button class="text-gray-400 hover:text-white">
+                        <i class="fas fa-random"></i>
+                    </button>
+                    <button onclick="spotifyPlayer.previousTrack()" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button id="play-btn" onclick="spotifyPlayer.togglePlay()" 
+                            class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button onclick="spotifyPlayer.nextTrack()" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                    <button class="text-gray-400 hover:text-white">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+                <div class="w-full flex items-center space-x-2">
+                    <span id="current-time" class="text-xs text-gray-400">0:00</span>
+                    <div id="progress-container" class="flex-1 h-1 bg-gray-600 rounded-full cursor-pointer">
+                        <div id="progress-bar" class="h-full bg-green-500 rounded-full w-0"></div>
+                    </div>
+                    <span id="duration" class="text-xs text-gray-400">3:45</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4 w-1/4 justify-end">
+                <button class="text-gray-400 hover:text-white">
+                    <i class="fas fa-list"></i>
+                </button>
+                <button class="text-gray-400 hover:text-white">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <div class="w-20 h-1 bg-gray-600 rounded-full">
+                    <div class="h-full bg-gray-300 rounded-full w-3/4"></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <div id="spotify-player" style="display: none;"></div>
+    <script src="spotify-api.js"></script>
+    <script src="player.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
